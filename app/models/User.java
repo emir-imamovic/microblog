@@ -1,6 +1,9 @@
 package models;
 
+import java.util.List;
+
 import javax.persistence.*;
+
 import play.data.validation.Constraints.*;
 import play.db.ebean.Model;
 import helpers.*;
@@ -15,6 +18,9 @@ public class User extends Model {
 
 	@MinLength(6)
 	public String password;
+
+	@OneToMany(mappedBy = "author")
+	public List<Post> posts;
 
 	public User() {
 		this.id = -1;

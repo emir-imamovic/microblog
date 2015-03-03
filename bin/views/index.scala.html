@@ -4,6 +4,11 @@
 
 @main("Index") {
 	<div class="container" >
+	
+	 @if(Session.getCurrentUser(ctx()) != null) {
+	 	<h2> Welcome @Session.getCurrentUser(ctx()).email </h2>
+	 	<a href='/signout' class='btn btn-danger'> Signout </a>
+	 	} else {
 @helper.form(routes.Application.signin()) {
 	@if(loginForm.hasGlobalErrors ) {
 		<div class="danger">
@@ -13,6 +18,7 @@
 	@helper.inputText(loginForm("email") )
 	@helper.inputPassword(loginForm("password") )
 	<input type="submit" value="Login" class="btn btn-info" />
+}
 }
 </div>
 }
