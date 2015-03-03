@@ -15,40 +15,33 @@ public class Application extends Controller {
 
 		public String validate() {
 			User u = User.find(email);
+			if (User.authenticate(email, password) == null) {
+				return "Email/Password is not valid";
+			}
+
+		}
+
+		static Form<Login> loginForm = new Form<Login>(Login.class);
+
+		public static Result index() {
+			return ok(index.render(loginForm));
+		}
+
+		public static Result signin() {
+			Form<Login> submit = loginForm.bindFromRequest();
+			if (submit.hasGlobalErrors()) {
+				return ok(index.render(submit));
+			}
+			Login l = submit.get();
+			User u = User.authenticate(l.email, l.password);
 			if (u == null) {
-				return "Incorrect email or password!";
+				return ok(index.render(submit));
+			} else {
+				session().clear();
+				session("user_id", Long.toString(u.id));
+				return redirect("/user/" + u.id);
 			}
-			if(HashHelper.checkPassword(password, u.password) == false) {
-				return "Incorrect email or password!";
-			}
-			return null;
 		}
 
-	}
-
-	static Form<Login> loginForm = new Form<Login>(Login.class);
-
-	public static Result index() {
-		return ok(index.render(loginForm));
-	}
-
-	public static Result signin() {
-		Form<Login> submit = loginForm.bindFromRequest();
-		if (submit.hasGlobalErrors()) {
-			return ok(index.render(submit));
-		}
-		String email = submit.get().email;
-		String password = submit.get().password;
-		User u = User.find(email);
-		if (u == null) {
-			return ok(index.render(submit));
-		}
-
-		if (HashHelper.checkPassword(password, u.password) == true) {
-			session("user_id", Long.toString(u.id));
-			return redirect("/user/" + u.id);
-		} else {
-			return ok(index.render(submit));
-		}
 	}
 }
