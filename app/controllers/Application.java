@@ -14,7 +14,11 @@ public class Application extends Controller {
 		public String password;
 
 		public String validate() {
-			if (User.find(email) == null) {
+			User u = User.find(email);
+			if (u == null) {
+				return "Incorrect email or password!";
+			}
+			if(HashHelper.checkPassword(password, u.password) == false) {
 				return "Incorrect email or password!";
 			}
 			return null;
